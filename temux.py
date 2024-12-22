@@ -4,17 +4,11 @@
 import os
 import sys
 import time
-import json
 import random
 import smtplib
-import shutil
-import socket
-import webbrowser
+import requests
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from bs4 import BeautifulSoup as parser
-import requests
-import concurrent.futures
 
 # Data pengguna
 USERS = {
@@ -40,8 +34,6 @@ MENU_LOGO = f"""
 ╚══════╝ ╚═════╝ ╚══════╝╚═╝      ╚═════╝
 """
 
-UPDATE = "22-12-2024 10:00"
-
 def send_reset_email(email, recovery_code):
     try:
         # Membuat email
@@ -66,25 +58,33 @@ def login():
     os.system("clear")
     print(MENU_LOGO)
     print(f"{g}[LOGIN] Masukkan username dan password Anda\n")
+    print(f"{g}[0] {c}Kembali ke menu utama{a}")
     username = input(f"{c}Username: {a}")
-    password = input(f"{c}Password: {a}")
 
-    if username in USERS and USERS[username]["password"] == password:
-        print(f"{g}[✓] Login berhasil! Selamat datang, {username}{a}")
-        time.sleep(2)
+    if username == "0":
         menu()
     else:
-        print(f"{r}[x] Username atau password salah!{a}")
-        time.sleep(2)
-        login()
+        password = input(f"{c}Password: {a}")
+
+        if username in USERS and USERS[username]["password"] == password:
+            print(f"{g}[✓] Login berhasil! Selamat datang, {username}{a}")
+            time.sleep(2)
+            menu()
+        else:
+            print(f"{r}[x] Username atau password salah!{a}")
+            time.sleep(2)
+            login()
 
 def reset_password():
     os.system("clear")
     print(MENU_LOGO)
     print(f"{g}[RESET PASSWORD] Masukkan username untuk memulihkan akun Anda\n")
+    print(f"{g}[0] {c}Kembali ke menu utama{a}")
     username = input(f"{c}Username: {a}")
 
-    if username in USERS:
+    if username == "0":
+        menu()
+    elif username in USERS:
         email = USERS[username]["email"]
         recovery_code = str(random.randint(100000, 999999))
         send_reset_email(email, recovery_code)
